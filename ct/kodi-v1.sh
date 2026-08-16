@@ -233,7 +233,7 @@ export PCT_OPTIONS="
   -unprivileged $CT_TYPE
   $PW
 "
-bash -c "$(wget -qLO - https://raw.githubusercontent.com/snt-Mikhail/proxmoxHelper/refs/heads/dev/setup/create_lxc.sh)" || exit
+#bash -c "$(wget -qLO - https://raw.githubusercontent.com/snt-Mikhail/proxmoxHelper/refs/heads/dev/setup/create_lxc.sh)" || exit
 
 msg_info "Pre-starting LXC Container"
 pct start $CTID
