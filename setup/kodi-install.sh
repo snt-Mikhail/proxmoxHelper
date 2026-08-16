@@ -91,11 +91,11 @@ alias die='EXIT=$? LINE=$LINENO error_exit'
 set -e    
 msg_ok "Set Up Hardware Acceleration"  
 
-msg_info "Adding Kodi Repository for Ubuntu 26.04"
-wget -qO- https://mirrors.kodi.tv/repos/apt/key.asc | gpg --dearmor > /usr/share/keyrings/kodi-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/kodi-keyring.gpg] https://mirrors.kodi.tv/repos/apt/ubuntu lunar main" > /etc/apt/sources.list.d/kodi.list
-apt-get update &>/dev/null
-msg_ok "Added Kodi Repository"
+#msg_info "Adding Kodi Repository for Ubuntu 26.04"
+#wget -qO- https://mirrors.kodi.tv/repos/apt/key.asc | gpg --dearmor > /usr/share/keyrings/kodi-keyring.gpg
+#echo "deb [signed-by=/usr/share/keyrings/kodi-keyring.gpg] https://mirrors.kodi.tv/repos/apt/ubuntu lunar main" > /etc/apt/sources.list.d/kodi.list
+#apt-get update &>/dev/null
+m#sg_ok "Added Kodi Repository"
 
 msg_info "Setting Up kodi user"
 useradd -d /home/kodi -m kodi &>/dev/null
