@@ -86,7 +86,7 @@ apt-get -y install \
     ocl-icd-libopencl1 &>/dev/null 
 set +e
 alias die=''
-apt-get install --ignore-missing -y intel-opencl-icd &>/dev/null
+apt-get install --ignore-missing -y beignet-opencl-icd &>/dev/null
 alias die='EXIT=$? LINE=$LINENO error_exit'
 set -e    
 msg_ok "Set Up Hardware Acceleration"  
