@@ -73,29 +73,19 @@ msg_info "Installing Dependencies"
 apt-get install -y curl &>/dev/null
 apt-get install -y sudo &>/dev/null
 apt-get install -y gnupg &>/dev/null
-apt-get install -y wget &>/dev/null
-apt-get install -y software-properties-common &>/dev/null
-apt-get install -y apt-transport-https &>/dev/null
-apt-get install -y xz-utils &>/dev/null
 msg_ok "Installed Dependencies"
 
 msg_info "Setting Up Hardware Acceleration"  
 apt-get -y install \
     va-driver-all \
-    mesa-va-drivers \
     ocl-icd-libopencl1 &>/dev/null 
 set +e
 alias die=''
 apt-get install --ignore-missing -y beignet-opencl-icd &>/dev/null
 alias die='EXIT=$? LINE=$LINENO error_exit'
-set -e    
+set -e
+    
 msg_ok "Set Up Hardware Acceleration"  
-
-#msg_info "Adding Kodi Repository for Ubuntu 26.04"
-#wget -qO- https://mirrors.kodi.tv/repos/apt/key.asc | gpg --dearmor > /usr/share/keyrings/kodi-keyring.gpg
-#echo "deb [signed-by=/usr/share/keyrings/kodi-keyring.gpg] https://mirrors.kodi.tv/repos/apt/ubuntu lunar main" > /etc/apt/sources.list.d/kodi.list
-#apt-get update &>/dev/null
-m#sg_ok "Added Kodi Repository"
 
 msg_info "Setting Up kodi user"
 useradd -d /home/kodi -m kodi &>/dev/null
@@ -104,26 +94,23 @@ gpasswd -a kodi video &>/dev/null
 gpasswd -a kodi render &>/dev/null
 groupadd -r autologin &>/dev/null
 gpasswd -a kodi autologin &>/dev/null
-gpasswd -a kodi input &>/dev/null
-gpasswd -a kodi dialout &>/dev/null
+gpasswd -a kodi input &>/dev/null #to enable direct access to devices
 msg_ok "Set Up kodi user"
 
 msg_info "Installing lightdm"
-DEBIAN_FRONTEND=noninteractive apt-get install -y lightdm lightdm-gtk-greeter &>/dev/null
+DEBIAN_FRONTEND=noninteractive apt-get install -y lightdm &>/dev/null
 echo "/usr/sbin/lightdm" > /etc/X11/default-display-manager
 msg_ok "Installed lightdm"
 
-msg_info "Installing Kodi 21.3"
-apt-get install -y kodi=2:21.3* &>/dev/null
+msg_info "Installing kodi"
+apt-get update &>/dev/null
+apt-get install -y kodi &>/dev/null
 set +e
 alias die=''
-apt-get install -y kodi-peripheral-joystick &>/dev/null || true
-apt-get install -y kodi-inputstream-adaptive &>/dev/null || true
-apt-get install -y kodi-audiodecoder-opus &>/dev/null || true
-apt-get install -y kodi-visualization-waveform &>/dev/null || true
+apt-get install --ignore-missing -y kodi-peripheral-joystick &>/dev/null
 alias die='EXIT=$? LINE=$LINENO error_exit'
 set -e
-msg_ok "Installed Kodi 21.3"
+msg_ok "Installed kodi"
 
 msg_info "Updating xsession"
 cat <<EOF >/usr/share/xsessions/kodi-alsa.desktop
@@ -137,7 +124,6 @@ EOF
 msg_ok "Updated xsession"
 
 msg_info "Setting up autologin"
-mkdir -p /etc/lightdm/lightdm.conf.d
 cat <<EOF >/etc/lightdm/lightdm.conf.d/autologin-kodi.conf
 [Seat:*]
 autologin-user=kodi
@@ -146,7 +132,8 @@ EOF
 msg_ok "Set up autologin"
 
 msg_info "Setting up device detection for xorg"
-apt-get install -y xserver-xorg-input-evdev xserver-xorg-input-libinput &>/dev/null
+apt-get install -y xserver-xorg-input-evdev &>/dev/null
+#following script needs to be executed before Xorg starts to enumerate all input devices
 /bin/mkdir -p /etc/X11/xorg.conf.d
 cat >/usr/local/bin/preX-populate-input.sh  << __EOF__
 #!/usr/bin/env bash
@@ -202,11 +189,14 @@ msg_ok "Customized Container"
   fi
   
 msg_info "Cleaning up"
-apt-get autoremove -y >/dev/null
-apt-get autoclean -y >/dev/null
+apt-get autoremove >/dev/null
+apt-get autoclean >/dev/null
 msg_ok "Cleaned"
 
 msg_info "Starting X up"
 systemctl start lightdm
 ln -fs /lib/systemd/system/lightdm.service /etc/systemd/system/display-manager.service
-msg_ok "Started X"
+msg_info "Started X"
+
+
+
